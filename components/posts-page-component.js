@@ -119,7 +119,7 @@ export function renderPostsPageComponent({ appEl }) {
               document.querySelectorAll(".delete-comment").forEach((delEl) => {
                 delEl.addEventListener("click", () => {
                   if (!getToken()) {
-                    alert("Лайкать посты могут только авторизованные пользователи!");
+                    alert("Удалять посты могут только авторизованные пользователи!");
                     return;
                   }
                   deletePost({
