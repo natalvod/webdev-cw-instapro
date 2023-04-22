@@ -196,3 +196,13 @@
   width: 100%;
   text-align: center;
 }
+
+.delete-comment {
+  cursor: pointer;
+  border-radius: 30px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  background-color: rgb(252, 214, 214);
+  color: rgb(58, 21, 11);
+  padding: 5px;
+}
