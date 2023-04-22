@@ -1,8 +1,8 @@
-import { USER_POSTS_PAGE } from "../routes.js";
+import { USER_POSTS_PAGE, POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage, getToken } from "../index.js";
 import { addLike } from "../api.js";
-import { deleteLike } from "../api.js";
+import { deleteLike, deletePost } from "../api.js";
 import { user } from "../index.js";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from 'date-fns/locale/';
@@ -50,8 +50,8 @@ export function renderPostsPageComponent({ appEl }) {
                     </p>
                     <p class="post-date">
                     ${formatDistanceToNow(new Date(post.createdAt), { locale: ru, addSuffix: true })}
-                    </p>
-                    
+                    </p><br>
+                    <button class="delete-comment" data-post-id="${post.id}">Удалить пост</button><br>
                   </li>
                 `
                 }).join('') +
@@ -115,5 +115,20 @@ export function renderPostsPageComponent({ appEl }) {
                   }
                 });
               }
+
+              document.querySelectorAll(".delete-comment").forEach((delEl) => {
+                delEl.addEventListener("click", () => {
+                  if (!getToken()) {
+                    alert("Лайкать посты могут только авторизованные пользователи!");
+                    return;
+                  }
+                  deletePost({
+                    token : getToken(),
+                    id : delEl.dataset.postId,
+                  }).then(() => {
+                    goToPage(POSTS_PAGE);
+                })                 
+                });
+              });
 }
 
