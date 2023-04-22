@@ -1,6 +1,9 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage } from "../index.js";
+import { posts, goToPage, getToken } from "../index.js";
+import { addLike } from "../api.js";
+import { deleteLike } from "../api.js";
+import { user } from "../index.js"
 
 export function renderPostsPageComponent({ appEl }) {
   // TODO: реализовать рендер постов из api
@@ -28,12 +31,14 @@ export function renderPostsPageComponent({ appEl }) {
                       <img class="post-image" src=${post.imageUrl}>
                     </div>
                     <div class="post-likes">
-                    <div class="post-likes">
-                    <button data-post-id="642d00579b190443860c2f32" class="like-button">
-                      <img src="./assets/images/like-active.svg">
+                    <button data-post-id=${post.id} class="like-button">
+                      <img src="./assets/images/${post.isLiked ? 'like-active.svg' : 'like-not-active.svg'}">
                     </button>
                     <p class="post-likes-text">
-                      Нравится: <strong>2</strong>
+                       Нравится: <strong>
+                        ${post.likes.length > 1 ? post.likes[0].name + ` и ещё ${post.likes.length - 1}`
+                        : post.likes.length ? post.likes[0].name
+                        : "0"}</strong>
                     </p>
                   </div>
                     </div>
@@ -66,4 +71,43 @@ export function renderPostsPageComponent({ appEl }) {
                 });
               }
 
+              const buttonLikeElements = document.querySelectorAll(".like-button");
+              for (let buttonLikeElement of buttonLikeElements) {
+                buttonLikeElement.addEventListener("click", () => {
+                  const postId = buttonLikeElement.dataset.postId;
+                  const index = buttonLikeElement.closest(".post").dataset.index;
+            
+                  if (user && posts[index].isLiked === false) {
+                    addLike({
+                      token: getToken(),
+                      postId: postId,
+                    }).catch(() => {
+                      posts[index].isLiked = false;
+                      posts[index].likes.pop();
+                      renderPostsPageComponent({ appEl, posts });
+                    });
+                    posts[index].isLiked = true;
+                    posts[index].likes.push({
+                      id: user.id,
+                      name: user.name,
+                    });
+                    renderPostsPageComponent({ appEl, posts });
+                  } else if (user && posts[index].isLiked === true) {
+                    deleteLike({
+                      token: getToken(),
+                      postId: postId,
+                    }).catch(() => {
+                      posts[index].isLiked = true;
+                      posts[index].likes.push({
+                        id: user.id,
+                        name: user.name,
+                      });
+                    });
+                    posts[index].isLiked = false;
+                    posts[index].likes.pop();
+                    renderPostsPageComponent({ appEl, posts });
+                  }
+                });
+              }
 }
+
