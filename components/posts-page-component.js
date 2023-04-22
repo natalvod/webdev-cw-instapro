@@ -74,6 +74,10 @@ export function renderPostsPageComponent({ appEl }) {
               const buttonLikeElements = document.querySelectorAll(".like-button");
               for (let buttonLikeElement of buttonLikeElements) {
                 buttonLikeElement.addEventListener("click", () => {
+                  if (!getToken()) {
+                    alert("Лайкать посты могут только авторизованные пользователи!");
+                    return;
+                  }
                   const postId = buttonLikeElement.dataset.postId;
                   const index = buttonLikeElement.closest(".post").dataset.index;
             

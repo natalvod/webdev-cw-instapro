@@ -65,13 +65,16 @@ export function getPostsUser({ token, id }) {
     });
 }
 
-export function addLike({  postId, token,}) {
+export function addLike({ postId, token,}) {
   return fetch(postsHost + `/${postId}/like`, {
     method: "POST",
     headers: {
       Authorization: token,
     },
   }).then((response) => {
+    if (response.status === 401) {
+      throw new Error("Нет авторизации");
+    }
     return response.json();
   });
 }
@@ -83,6 +86,9 @@ export function deleteLike({ token, postId }) {
       Authorization: token,
     },
   }).then((response) => {
+    if (response.status === 401) {
+      throw new Error("Нет авторизации");
+    }
     return response.json();
   });
 }
