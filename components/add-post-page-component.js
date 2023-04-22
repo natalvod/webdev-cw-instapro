@@ -6,6 +6,11 @@ import { getToken, goToPage } from "../index.js";
 
 let imageUrl = "";
 
+export function secureInput(safeText){
+  return safeText.replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+}
+
 export function renderAddPostPageComponent({ appEl }) {
   const render = () => {
     // TODO: Реализовать страницу добавления поста
@@ -61,7 +66,7 @@ export function renderAddPostPageComponent({ appEl }) {
 
     addPostUser({
       token: getToken(),
-      description: textInputElement.value,
+      description: secureInput(textInputElement.value),
       imageUrl,
     })
       .then((response) => {
